@@ -13,33 +13,70 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-const employeeData = () => inquirer.prompt([
-    {
-        type: "input",
-        name: "role",
-        message: "What is the employee's role within the company?"
-    },
-    {
-        type: "input",
-        name: "name",
-        message: "What is the employee's name?"
-    },
-    {
-        type: "input",
-        name: "id",
-        message: "What is the employee's ID number?"
-    },
-    {
-        type: "input",
-        name: "email",
-        message: "What is the employee's email?"
-    }
-]);
-employeeData();
+const employeeData = async (employees = []) => {
+    const prompts = [
+        {
+            type: "list",
+            name: "role",
+            message: "What is the employee's role within the company?",
+            choices: ['Intern', 'Engineer', 'Manager']
+        },
+        {
+            type: "input",
+            name: "name",
+            message: "What is the employee's name?"
+        },
+        {
+            type: "input",
+            name: "id",
+            message: "What is the employee's ID number?"
+        },
+        {
+            type: "input",
+            name: "email",
+            message: "What is the employee's email?"
+        },
+        {
+            type: "input",
+            name: "school",
+            message: (answers) => `What is the ${answers.role}'s school name?`,
+            when: (answers) => answers.role === 'Intern'
+        },
+        {
+            type: "input",
+            name: "github",
+            message: (answers) => `What is the ${answers.role}'s Github username?`,
+            when: (answers) => answers.role === 'Engineer'
+        },
+        {
+            type: "input",
+            name: "officeNumber",
+            message: (answers) => `What is the ${answers.role}'s office number?`,
+            when: (answers) => answers.role === 'Manager'
+        },
+        {
+            type: 'confirm',
+            name: 'addAnother',
+            message: 'Add another employee?',
+            default: true
+        }
+    ];
+    // referenced http://www.penandpaperprogrammer.com/blog/2018/12/16/repeating-questions-with-inquirerjs in order to add multiple employees using same command line
+    const { addAnother, ...answers } = await inquirer.prompt(prompts);
+    const newEmployees = [...employees, answers];
+    return addAnother ? employeeData(newEmployees) : newEmployees;
+};
+
+const results = async () => {
+    const employees = await employeeData();
+    console.log(employees); // render function
+};
+results();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
+
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
