@@ -14,7 +14,9 @@
 ## Installation
     npm init --> install node.js, inquirer.js
 ## Usage
-    
+![Usage](https://github.com/matthayden09/employee_template_engine/blob/main/assets/usage.png)
+
+[Link to video walkthrough](https://drive.google.com/file/d/1QoPERiWucB_tLAWuJHoTWR8c1_CzQri_/view)
 ## Contribution
     Contributions are welcome!
 ## Test

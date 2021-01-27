@@ -70,7 +70,6 @@ const employeeData = async (employees = []) => {
 
 const results = async () => {
     const employees = await employeeData();
-    console.log(employees)
 
     let constructed = employees.map(value => {
 
@@ -80,12 +79,12 @@ const results = async () => {
                 break;
             case 'Engineer': return new Engineer(value.name, value.id, value.email, value.github)
                 break;
-            case 'Manager': return new Manager(value.name, value.id, value.github, value.officeNumber)
+            case 'Manager': return new Manager(value.name, value.id, value.email, value.officeNumber)
         }
     })
 
     const createHtml = render(constructed)
-    console.log(createHtml)
+    
     fs.writeFile(outputPath, createHtml, function (err) {
         if (err) throw err;
     })
