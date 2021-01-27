@@ -74,7 +74,7 @@ const results = async () => {
 
     let constructed = employees.map(value => {
 
-        // value order still returning jumb
+        
         switch (value.role) {
             case 'Intern': return new Intern(value.name, value.id, value.email, value.school)
                 break;
