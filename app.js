@@ -10,10 +10,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
+// Inquirer input array
 const employeeData = async (employees = []) => {
     const prompts = [
         {
@@ -63,7 +60,8 @@ const employeeData = async (employees = []) => {
         }
     ];
 
-    // referenced http://www.penandpaperprogrammer.com/blog/2018/12/16/repeating-questions-with-inquirerjs in order to add multiple employees using same command line
+    // referenced http://www.penandpaperprogrammer.com/blog/2018/12/16/repeating-questions-with-inquirerjs 
+    // in order to add multiple employees using same command line
 
     const { addAnother, ...answers } = await inquirer.prompt(prompts);
     const newEmployees = [...employees, answers];
@@ -84,23 +82,11 @@ const results = async () => {
             case 'Manager': return new Manager(value.name, value.role, value.email, value.id, value.officeNumber)
         }
     })
-    console.log(constructed)
-    console.log(constructed[0].getRole())
-
-    // const intern = new Intern(answers.name, answers.role, answers.email, answers.id, answers.school)
-    // employees.push(intern)
-
-    // const engineer = new Engineer(answers.name, answers.role, answers.email, answers.id, answers.github)
-    // employees.push(engineer)
-
-    // const manager = new Manager(answers.name, answers.role, answers.email, answers.id, answers.officeNumber)
-    // employees.push(manager)
-
-    // console.log(employees); // render function
 
     const createHtml = render(constructed)
     console.log(createHtml)
     fs.writeFile(outputPath, createHtml, function (err) {
-        if (err) throw err;})
+        if (err) throw err;
+    })
 };
 results();
