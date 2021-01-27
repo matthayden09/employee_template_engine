@@ -11,10 +11,16 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 const employeeData = async (employees = []) => {
     const prompts = [
+        {
+            type: "input",
+            name: "name",
+            message: "What is the employee's name?"
+        },
         {
             type: "list",
             name: "role",
@@ -23,8 +29,8 @@ const employeeData = async (employees = []) => {
         },
         {
             type: "input",
-            name: "name",
-            message: "What is the employee's name?"
+            name: "email",
+            message: "What is the employee's email?"
         },
         {
             type: "input",
@@ -33,14 +39,9 @@ const employeeData = async (employees = []) => {
         },
         {
             type: "input",
-            name: "email",
-            message: "What is the employee's email?"
-        },
-        {
-            type: "input",
-            name: "school",
-            message: (answers) => `What is the ${answers.role}'s school name?`,
-            when: (answers) => answers.role === 'Intern'
+            name: "officeNumber",
+            message: (answers) => `What is the ${answers.role}'s office number?`,
+            when: (answers) => answers.role === 'Manager'
         },
         {
             type: "input",
@@ -50,9 +51,9 @@ const employeeData = async (employees = []) => {
         },
         {
             type: "input",
-            name: "officeNumber",
-            message: (answers) => `What is the ${answers.role}'s office number?`,
-            when: (answers) => answers.role === 'Manager'
+            name: "school",
+            message: (answers) => `What is the ${answers.role}'s school name?`,
+            when: (answers) => answers.role === 'Intern'
         },
         {
             type: 'confirm',
@@ -61,7 +62,9 @@ const employeeData = async (employees = []) => {
             default: true
         }
     ];
+
     // referenced http://www.penandpaperprogrammer.com/blog/2018/12/16/repeating-questions-with-inquirerjs in order to add multiple employees using same command line
+
     const { addAnother, ...answers } = await inquirer.prompt(prompts);
     const newEmployees = [...employees, answers];
     return addAnother ? employeeData(newEmployees) : newEmployees;
@@ -69,27 +72,35 @@ const employeeData = async (employees = []) => {
 
 const results = async () => {
     const employees = await employeeData();
-    console.log(employees); // render function
+    console.log(employees)
+
+    let constructed = employees.map(value => {
+
+        switch (value.role) {
+            case 'Intern': return new Intern(value.name, value.role, value.email, value.id, value.school)
+                break;
+            case 'Engineer': return new Engineer(value.name, value.role, value.email, value.id, value.github)
+                break;
+            case 'Manager': return new Manager(value.name, value.role, value.email, value.id, value.officeNumber)
+        }
+    })
+    console.log(constructed)
+    console.log(constructed[0].getRole())
+
+    // const intern = new Intern(answers.name, answers.role, answers.email, answers.id, answers.school)
+    // employees.push(intern)
+
+    // const engineer = new Engineer(answers.name, answers.role, answers.email, answers.id, answers.github)
+    // employees.push(engineer)
+
+    // const manager = new Manager(answers.name, answers.role, answers.email, answers.id, answers.officeNumber)
+    // employees.push(manager)
+
+    // console.log(employees); // render function
+
+    const createHtml = render(constructed)
+    console.log(createHtml)
+    fs.writeFile(outputPath, createHtml, function (err) {
+        if (err) throw err;})
 };
 results();
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
